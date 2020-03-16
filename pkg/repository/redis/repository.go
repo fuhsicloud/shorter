@@ -23,7 +23,7 @@ func (m * redisRepository)Exists(has string)(exists bool, err error) {
 }
 
 func NewRedisRepository(drive RedisDrive, hosts, password, prefix string, database int)(service.Repository, error) {
-	rdsClient: = NewRedisClient(drive, hosts, password, prefix, database)
+	rdsClient:= NewRedisClient(drive, hosts, password, prefix, database)
 
 	return & redisRepository {client:rdsClient}, nil
 }
@@ -33,7 +33,7 @@ func (m * redisRepository)generateKey(code string)string {
 }
 
 func (m * redisRepository)Find(code string)(redirect * service.Redirect, err error) {
-	data, err: = m.client.HGetAll(m.generateKey(code))
+	data, err:= m.client.HGetAll(m.generateKey(code))
 	if err != nil {
 		return nil, errors.Wrap(err, "repository.Redirect.Find")
 	}
@@ -42,7 +42,7 @@ func (m * redisRepository)Find(code string)(redirect * service.Redirect, err err
 		return nil, errors.Wrap(service.ErrRedirectNotFound, "repository.Redirect.Find")
 	}
 
-	now, err: = time.Parse("2006-01-02 15:04:05", data["created_at"])
+	now, err:= time.Parse("2006-01-02 15:04:05", data["created_at"])
 	if err != nil {
 		return
 	}
@@ -55,13 +55,13 @@ func (m * redisRepository)Find(code string)(redirect * service.Redirect, err err
 }
 
 func (m * redisRepository)Store(redirect * service.Redirect)error {
-	data: = map[string]interface {} {
+	data:= map[string]interface {} {
 		"code":redirect.Code, 
 		"url":redirect.URL, 
 		"created_at":redirect.CreatedAt.Format("2006-01-02 15:04:05"), 
 	}
 
-	err: = m.client.HMSet(m.generateKey(redirect.Code), data)
+	err:= m.client.HMSet(m.generateKey(redirect.Code), data)
 	if err != nil {
 		return errors.Wrap(err, "repository.Redirect.Store")
 	}

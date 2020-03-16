@@ -30,7 +30,7 @@ type service struct {
 
 func New(middleware []Middleware, logger log.Logger, repository Repository, shortUri string)Service {
 	var svc Service = NewService(logger, repository, shortUri)
-	for _, m: = range middleware {
+	for _, m := range middleware {
 		svc = m(svc)
 	}
 	return svc
@@ -45,9 +45,9 @@ func (s * service)Get(ctx context.Context, code string)(redirect * Redirect, err
 }
 
 func (s * service)Post(ctx context.Context, domain string)(redirect * Redirect, err error) {
-	now: = time.Now()
+	now := time.Now()
 	now = now.In(time.Local)
-	code: = shortid.MustGenerate()
+	code := shortid.MustGenerate()
 
 	// todo 考虑如何处理垃圾数据的问题 得复的url 不同的code
 

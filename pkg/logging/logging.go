@@ -15,11 +15,11 @@ import (
 
 func SetLogging(logger log.Logger, logPath, loglevel * string)log.Logger {
 	if logPath != nil && len( * logPath) > 0 {
-		logrusLogger, err: = LogrusLogger( * logPath)
+		logrusLogger, err := LogrusLogger( * logPath)
 		if err != nil {
 			panic(err)
 		}
-		logLevel, _: = logrus.ParseLevel( * loglevel)
+		logLevel, _ := logrus.ParseLevel( * loglevel)
 		logrusLogger.SetLevel(logLevel)
 		logger = kitlogrus.NewLogrusLogger(logrusLogger)
 	}else {
@@ -53,13 +53,13 @@ func setLogLevel(logLevel string)(opt level.Option) {
 
 func LogrusLogger(filePath string)( * logrus.Logger, error) {
 	//path, fileName := filepath.Split(filePath)
-	linkFile, err: = filepath.Abs(filePath)
+	linkFile, err := filepath.Abs(filePath)
 	if err != nil {
 		return nil, err
 	}
 
-	logrusLogger: = logrus.New()
-	writer, err: = rotatelogs.New(
+	logrusLogger := logrus.New()
+	writer, err := rotatelogs.New(
 		linkFile + "-%Y-%m-%d", 
 		rotatelogs.WithLinkName(linkFile), // 生成软链，指向最新日志文件
 		rotatelogs.WithMaxAge(time.Hour * 24 * 365), // 文件最大保存时间

@@ -30,13 +30,13 @@ var logger log.Logger
 var (
 	fs = flag.NewFlagSet("hello", flag.ExitOnError)
 	httpAddr = fs.String("http-addr", ":8080", "HTTP listen address")
-	dbDrive = fs.String("db-drive", "mongo", "db drive type, default: mongo")
+	dbDrive = fs.String("db-drive", "redis", "db drive type, default: mongo")
 	mongoAddr = fs.String("mongo-addr", "mongodb://localhost:32768", "mongodb uri, default: mongodb://localhost:27017")
 	redisDrive = fs.String("redis-drive", "single", "redis drive: single or cluster")
-	redisHosts = fs.String("redis-hosts", "localhost:6379", "redis hosts, many ';' split")
+	redisHosts = fs.String("redis-hosts", "122.152.197.181:6379", "redis hosts, many ';' split")
 	redisPassword = fs.String("redis-password", "", "redis password")
-	redisDB = fs.String("redis-db", "0", "redis db")
-	shortUri = fs.String("short-uri", "http://localhost", "short url")
+	redisDB = fs.String("redis-db", "3", "redis db")
+	shortUri = fs.String("short-uri", "http://localhost:8080", "short url")
 	logPath = fs.String("log-path", "", "logging file path.")
 	logLevel = fs.String("log-level", "all", "logging level.")
 	devCors = fs.String("dev-cors", "false", "is develop")
@@ -45,7 +45,7 @@ var (
 )
 
 func Run() {
-	if err: = fs.Parse(os.Args[1:]); err != nil {
+	if err:= fs.Parse(os.Args[1:]); err != nil {
 		panic(err)
 	}
 
@@ -72,7 +72,7 @@ func Run() {
 			return
 		}
 	case "redis":
-		db, _: = strconv.Atoi( * redisDB)
+		db, _:= strconv.Atoi( * redisDB)
 		repo, err = redis.NewRedisRepository(redis.RedisDrive( * redisDrive),  * redisHosts,  * redisPassword, "shorter", db)
 		if err != nil {
 			_ = level.Error(logger).Log("connect", "db", "err", err.Error())
@@ -80,25 +80,25 @@ func Run() {
 		}
 	}
 
-	svc: = service.New(getServiceMiddleware(logger), logger, repo,  * shortUri)
-	eps: = endpoint.New(svc, getEndpointMiddleware(logger))
-	g: = createService(eps)
+	svc:= service.New(getServiceMiddleware(logger), logger, repo,  * shortUri)
+	eps:= endpoint.New(svc, getEndpointMiddleware(logger))
+	g:= createService(eps)
 	initCancelInterrupt(g)
 	_ = logger.Log("exit", g.Run())
 }
 
 func initHttpHandler(endpoints endpoint.Endpoints, g * group.Group) {
-	options: = defaultHttpOptions(logger)
+	options:= defaultHttpOptions(logger)
 
-	httpHandler: = svchttp.NewHTTPHandler(endpoints, options)
-	httpListener, err: = net.Listen("tcp",  * httpAddr)
+	httpHandler:= svchttp.NewHTTPHandler(endpoints, options)
+	httpListener, err:= net.Listen("tcp",  * httpAddr)
 	if err != nil {
 		_ = level.Error(logger).Log("transport", "HTTP", "during", "Listen", "err", err)
 	}
 	g.Add(func()error {
 		_ = level.Debug(logger).Log("transport", "HTTP", "addr",  * httpAddr)
-		headers: = make(map[string]string)
-		if isDev, _: = strconv.ParseBool( * devCors); isDev {
+		headers:= make(map[string]string)
+		if isDev, _:= strconv.ParseBool( * devCors); isDev {
 			headers = map[string]string {
 				"Access-Control-Allow-Origin":"http://localhost:8000",
 				"Access-Control-Allow-Methods":"GET,POST,OPTIONS,PUT,DELETE", 
@@ -125,14 +125,14 @@ func getEndpointMiddleware(logger log.Logger)(mw map[string][]kitendpoint.Middle
 }
 
 func initCancelInterrupt(g * group.Group) {
-	cancelInterrupt: = make(chan struct {})
+	cancelInterrupt:= make(chan struct {})
 	g.Add(func()error {
-		c: = make(chan os.Signal, 1)
+		c:= make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 		select {
-		case sig: =  <  - c:
+		case sig := <- c:
 			return fmt.Errorf("received signal %s", sig)
-		case <  - cancelInterrupt:
+		case <- cancelInterrupt:
 			return nil
 		}
 	}, func(error) {
@@ -142,7 +142,7 @@ func initCancelInterrupt(g * group.Group) {
 
 func accessControl(h http.Handler, logger log.Logger, headers map[string]string)http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r * http.Request) {
-		for key, val: = range headers {
+		for key, val:= range headers {
 			w.Header().Set(key, val)
 		}
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -158,7 +158,7 @@ func accessControl(h http.Handler, logger log.Logger, headers map[string]string)
 }
 
 func envString(env string, fallback * string) * string {
-	e: = os.Getenv(env)
+	e:= os.Getenv(env)
 	if e == "" {
 		_ = os.Setenv(env,  * fallback)
 		return fallback
@@ -167,11 +167,11 @@ func envString(env string, fallback * string) * string {
 }
 
 func envInt(env string, fallback * int) * int {
-	e: = os.Getenv(env)
+	e:= os.Getenv(env)
 	if e == "" {
 		_ = os.Setenv(env, strconv.Itoa( * fallback))
 		return fallback
 	}
-	num, _: = strconv.Atoi(e)
+	num, _:= strconv.Atoi(e)
 	return & num
 }

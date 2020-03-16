@@ -16,7 +16,11 @@ localhost: `$ make run`
 ## 快速开始
 
 
-1. make 启动
+1. 正常启动
+```
+go run ./cmd/main.go -http-addr :8080
+```
+2. make 启动
 
 ```
 $ make run

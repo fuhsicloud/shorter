@@ -29,10 +29,10 @@ func (m * mongoRepository)Exists(has string)(exists bool, err error) {
 }
 
 func newMongoClient(mongoURL string, mongoTimeout int)( * mongo.Client, error) {
-	ctx, cancel: = context.WithTimeout(context.Background(), time.Duration(mongoTimeout) * time.Second)
+	ctx, cancel:= context.WithTimeout(context.Background(), time.Duration(mongoTimeout) * time.Second)
 	defer cancel()
 
-	client, err: = mongo.Connect(ctx, options.Client().ApplyURI(mongoURL))
+	client, err:= mongo.Connect(ctx, options.Client().ApplyURI(mongoURL))
 	if err != nil {
 		return nil, err
 	}
@@ -44,11 +44,11 @@ func newMongoClient(mongoURL string, mongoTimeout int)( * mongo.Client, error) {
 }
 
 func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int)(service.Repository, error) {
-	repo: =  & mongoRepository {
+	repo:=  & mongoRepository {
 		timeout:time.Duration(mongoTimeout) * time.Second, 
 		database:mongoDB, 
 	}
-	client, err: = newMongoClient(mongoURL, mongoTimeout)
+	client, err:= newMongoClient(mongoURL, mongoTimeout)
 	if err != nil {
 		return nil, errors.Wrap(err, "repository.mongodb.NewMongoRepository")
 	}
@@ -58,11 +58,11 @@ func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int)(service.Repo
 }
 
 func (m * mongoRepository)Find(code string)(redirect * service.Redirect, err error) {
-	ctx, cancel: = context.WithTimeout(context.Background(), m.timeout)
+	ctx, cancel:= context.WithTimeout(context.Background(), m.timeout)
 	defer cancel()
 
-	collection: = m.client.Database(m.database).Collection("redirects")
-	filter: = bson.M {"code":code}
+	collection:= m.client.Database(m.database).Collection("redirects")
+	filter:= bson.M {"code":code}
 
 	if err = collection.FindOne(ctx, filter).Decode( & redirect); err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -74,11 +74,11 @@ func (m * mongoRepository)Find(code string)(redirect * service.Redirect, err err
 }
 
 func (m * mongoRepository)Store(redirect * service.Redirect)error {
-	ctx, cancel: = context.WithTimeout(context.Background(), m.timeout)
+	ctx, cancel:= context.WithTimeout(context.Background(), m.timeout)
 	defer cancel()
 
-	collection: = m.client.Database(m.database).Collection("redirects")
-	_, err: = collection.InsertOne(ctx, bson.M {
+	collection:= m.client.Database(m.database).Collection("redirects")
+	_, err:= collection.InsertOne(ctx, bson.M {
 		"code":redirect.Code, 
 		"url":redirect.URL, 
 		"created_at":redirect.CreatedAt.Format("2006-01-02 15:04:05"), 

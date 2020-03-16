@@ -16,14 +16,14 @@ type Endpoints struct {
 }
 
 func New(s service.Service, mdw map[string][]endpoint.Middleware)Endpoints {
-	eps: = Endpoints {
+	eps:= Endpoints {
 		GetEndpoint:MakeGetEndpoint(s), 
 		PostEndpoint:MakePostEndpoint(s), 
 	}
-	for _, m: = range mdw["Get"] {
+	for _, m := range mdw["Get"] {
 		eps.GetEndpoint = m(eps.GetEndpoint)
 	}
-	for _, m: = range mdw["Post"] {
+	for _, m := range mdw["Post"] {
 		eps.PostEndpoint = m(eps.PostEndpoint)
 	}
 	return eps
@@ -56,17 +56,17 @@ type PostResponse struct {
 
 func MakeGetEndpoint(s service.Service)endpoint.Endpoint {
 	return func(ctx context.Context, request interface {})(response interface {}, err error) {
-		req: = request.(GetRequest)
-		redirect, err: = s.Get(ctx, req.Code)
+		req:= request.(GetRequest)
+		redirect, err:= s.Get(ctx, req.Code)
 		return GetResponse {Err:err, Data:redirect}, err
 	}
 }
 
 func MakePostEndpoint(s service.Service)endpoint.Endpoint {
 	return func(ctx context.Context, request interface {})(response interface {}, err error) {
-		req: = request.(PostRequest)
-		res, err: = s.Post(ctx, req.URL)
-		resp: = dataResponse {}
+		req:= request.(PostRequest)
+		res, err:= s.Post(ctx, req.URL)
+		resp:= dataResponse {}
 		if err == nil && res != nil {
 			resp.Code = res.Code
 			resp.CreatedAt = res.CreatedAt
@@ -86,8 +86,8 @@ type Failure interface {
 }
 
 func (e Endpoints)Get(ctx context.Context, code string)(rs interface {}, err error) {
-	request: = GetRequest {Code:code}
-	response, err: = e.GetEndpoint(ctx, request)
+	request:= GetRequest {Code:code}
+	response, err:= e.GetEndpoint(ctx, request)
 	if err != nil {
 		return
 	}
@@ -95,8 +95,8 @@ func (e Endpoints)Get(ctx context.Context, code string)(rs interface {}, err err
 }
 
 func (e Endpoints)Post(ctx context.Context, uri string)(rs interface {}, err error) {
-	request: = PostRequest {URL:uri}
-	response, err: = e.PostEndpoint(ctx, request)
+	request:= PostRequest {URL:uri}
+	response, err:= e.PostEndpoint(ctx, request)
 	if err != nil {
 		return
 	}

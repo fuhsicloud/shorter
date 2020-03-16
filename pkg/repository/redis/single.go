@@ -20,7 +20,7 @@ type single struct {
 }
 
 func NewRedisSingle(host, password, prefix string, db int)RedisInterface {
-	client: = redis.NewClient( & redis.Options {
+	client:= redis.NewClient( & redis.Options {
 		Addr:host, 
 		Password:password, // no password set
 		DB:db, // use default DB
@@ -35,11 +35,11 @@ func (c * single)Set(k string, v interface {}, expir ...time.Duration)(err error
 	case string:
 		val = v.(string)
 	default:
-		b, _: = json.Marshal(v)
+		b, _:= json.Marshal(v)
 		val = string(b)
 	}
 
-	exp: = expiration
+	exp:= expiration
 	if len(expir) == 1 {
 		exp = expir[0]
 	}
@@ -61,7 +61,7 @@ func (c * single)HSet(k string, field string, v interface {})(err error) {
 	case string:
 		val = v.(string)
 	default:
-		b, _: = json.Marshal(v)
+		b, _:= json.Marshal(v)
 		val = string(b)
 	}
 	return c.client.HSet(c.setPrefix(k), field, val).Err()
@@ -72,7 +72,7 @@ func (c * single)HGet(k string, field string)(res string, err error) {
 }
 
 func (c * single)HDelAll(k string)(err error) {
-	res, err: = c.client.HKeys(c.setPrefix(k)).Result()
+	res, err:= c.client.HKeys(c.setPrefix(k)).Result()
 	if err != nil {
 		return
 	}
@@ -108,7 +108,7 @@ func (c * single)HMSet(k string, fields map[string]interface {})(err error) {
 }
 
 func (c * single)Exists(k string)(bool, error) {
-	res, err: = c.client.Exists(c.setPrefix(k)).Result()
+	res, err:= c.client.Exists(c.setPrefix(k)).Result()
 	if err != nil {
 		return false, err
 	}
