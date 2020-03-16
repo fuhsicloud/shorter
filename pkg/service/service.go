@@ -7,9 +7,9 @@ import (
 	"context"
 	"github.com/go-kit/kit/log"
 	"github.com/pkg/errors"
-	"github.com/teris-io/shortid"
 	"strings"
 	"time"
+	"github.com/fuhsicloud/shorter/pkg/shortid"
 )
 
 var (

@@ -33,7 +33,7 @@ var (
 	dbDrive = fs.String("db-drive", "redis", "db drive type, default: mongo")
 	mongoAddr = fs.String("mongo-addr", "mongodb://localhost:32768", "mongodb uri, default: mongodb://localhost:27017")
 	redisDrive = fs.String("redis-drive", "single", "redis drive: single or cluster")
-	redisHosts = fs.String("redis-hosts", "122.152.197.181:6379", "redis hosts, many ';' split")
+	redisHosts = fs.String("redis-hosts", "localhost:6379", "redis hosts, many ';' split")
 	redisPassword = fs.String("redis-password", "", "redis password")
 	redisDB = fs.String("redis-db", "3", "redis db")
 	shortUri = fs.String("short-uri", "http://localhost:8080", "short url")
